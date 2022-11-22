@@ -9,33 +9,38 @@ public class Ball : MonoBehaviour
     [SerializeField] Transform Player;
     Rigidbody2D RB;
     [SerializeField] Text Score;
+    [SerializeField] int RestartScene;
     public int score;
     Vector2 BounceDir;
+    [SerializeField] float Gravity;
+    float OriginalGravity;
     void Start()
     {
+        OriginalGravity = Gravity;
         RB = GetComponent<Rigidbody2D>();
     }
 
     
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R) && !Menu.IsPaused)
         {
-            SceneManager.LoadScene(0);
-            /*transform.position = new Vector2(0, 0);
-            RB.velocity = new Vector2(0, 0);
-            score = 0;
-            Player.transform.position = new Vector2(0, -7);*/
-            //Camera.main.ScreenToWorldPoint(Input.mousePosition) = new Vector2(0, 0);
+            SceneManager.LoadScene(RestartScene);
         }
         Score.text = score.ToString();
+        Gravity += 2f * Time.deltaTime;
+    }
+    void FixedUpdate()
+    {
+        RB.AddForce (-transform.up * Gravity, ForceMode2D.Force);
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.transform.CompareTag("Player"))
         {
+            Gravity = OriginalGravity;
             BounceDir = Player.position - transform.position;
-            RB.velocity = new Vector2(RB.velocity.x, 17);
+            RB.velocity = new Vector2(RB.velocity.x, 22 + (score * 0.2f));
         }
         if (collision.transform.CompareTag("Block"))
         {
@@ -46,6 +51,7 @@ public class Ball : MonoBehaviour
         {
             RB.velocity = new Vector2(-RB.velocity.x, RB.velocity.y);
         }
+        
     }
 
 }

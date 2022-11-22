@@ -24,6 +24,14 @@ public class GoToMouse : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (Menu.IsPaused == false)
+        {
+            MovePlayer();
+        }
+    }
+
+    void MovePlayer()
+    {
         if (transform.position.x <= Camera.main.ScreenToWorldPoint(Input.mousePosition).x)
         {
             RB.AddForce(MoveDir * 6, ForceMode2D.Force);
